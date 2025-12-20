@@ -41,6 +41,14 @@ def add_expense():
 def get_expenses():
     return jsonify({"status": "success", "data": expenses}), 200
 
+# DELETE /expenses/<index> → Delete an expense
+@app.route("/expenses/<int:index>", methods=["DELETE"])
+def delete_expense(index):
+    if 0 <= index < len(expenses):
+        removed = expenses.pop(index)
+        return jsonify({"status": "success", "data": removed}), 200
+    return jsonify({"status": "error", "message": "Expense not found"}), 404
+
 # Root route
 @app.route("/")
 def index():
@@ -48,9 +56,3 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
-#from flask import render_template
-
-#@app.route("/")
-#def index():
- #   return render_template("index.html")
