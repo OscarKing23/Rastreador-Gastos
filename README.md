@@ -12,14 +12,21 @@ This project was developed for a hackathon to demonstrate **full‑stack develop
 - 🗑️ **Delete Expenses**: Remove any expense with a single click.
 - ✅ **Form Reset**: After adding, input fields clear for quick entry.
 - 🔒 **Validation**: Ensures title is not empty and amount is positive.
+- 📅 **Date Range Filter**: View expenses between two selected dates.
+- 🏷️ **Category Filter**: Filter expenses by category.
+- 🔄 **Clear Filter**: Reset filters and reload all expenses smoothly.
+- 💾 **Database Persistence**: Expenses stored in **SQLite** (`expenses.db`) 
 
 ---
 
 ## 🛠️ Tech Stack
 - **Frontend**: HTML, CSS, JavaScript  
 - **Backend**: Flask (Python)  
-- **Data Storage**: In‑memory list 
+- **Database**: SQLite (`expenses.db`)  
+
 ---
+
+## 🚀 How to Run
 
 ## 🚀 How to Run
 1. Clone the repository:
