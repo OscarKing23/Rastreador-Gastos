@@ -1,52 +1,68 @@
-async function fetchExpenses() {
-    const res = await fetch("/expenses");
-    const data = await res.json();
-    const tbody = document.querySelector("#expenses-table tbody");
-    tbody.innerHTML = "";
-    let total = 0;
-    data.data.forEach(exp => {
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-  <td>${exp.title}</td>
-  <td>${exp.amount}</td>
-  <td>${exp.category}</td>
-  <td>${exp.date}</td>
-  <td><button class="delete-btn" data-index="${data.data.indexOf(exp)}">Delete</button></td>
-`;
-      tbody.appendChild(tr);
-      total += exp.amount;
+document.addEventListener("DOMContentLoaded", () => {
+    loadExpenses();
+  
+    document.getElementById("expense-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+  
+      const expense = {
+        title: document.getElementById("title").value,
+        amount: document.getElementById("amount").value,
+        category: document.getElementById("category").value,
+        date: document.getElementById("date").value
+      };
+  
+      fetch("/expenses", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(expense)
+      })
+      .then(response => {
+        if (response.ok) {
+          alert("Expense added successfully!");
+          this.reset();
+          loadExpenses();
+        } else {
+          alert("Failed to add expense.");
+        }
+      });
     });
-    document.getElementById("total").textContent = total;
-    document.querySelectorAll(".delete-btn").forEach(btn => {
-        btn.addEventListener("click", async (e) => {
-          const idx = e.currentTarget.getAttribute("data-index");
-          const res = await fetch(`/expenses/${idx}`, { method: "DELETE" });
-          const json = await res.json();
-          if (res.ok && json.status === "success") {
-            fetchExpenses(); // refresh table
-          } else {
-            alert(json.message || "Failed to delete expense.");
-          }
+  });
+  
+  function loadExpenses() {
+    fetch("/expenses")
+      .then(response => response.json())
+      .then(data => {
+        const tbody = document.querySelector("#expenses-table tbody");
+        tbody.innerHTML = "";
+        let total = 0;
+  
+        data.data.forEach(expense => {
+          total += expense.amount;
+          const row = document.createElement("tr");
+  
+          row.innerHTML = `
+            <td>${expense.title}</td>
+            <td>${expense.amount}</td>
+            <td>${expense.category}</td>
+            <td>${expense.date}</td>
+            <td><button onclick="deleteExpense(${expense.id})">Delete</button></td>
+          `;
+  
+          tbody.appendChild(row);
         });
+  
+        document.getElementById("total").textContent = total.toFixed(2);
       });
   }
   
-  document.getElementById("expense-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const expense = {
-      title: document.getElementById("title").value,
-      amount: document.getElementById("amount").value,
-      category: document.getElementById("category").value,
-      date: document.getElementById("date").value
-    };
-    await fetch("/expenses", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(expense)
-    });
-    fetchExpenses();
-    e.target.reset();
-
-  });
-  
-  fetchExpenses();
+  function deleteExpense(id) {
+    fetch(`/expenses/${id}`, { method: "DELETE" })
+      .then(response => {
+        if (response.ok) {
+          alert("Expense deleted successfully!");
+          loadExpenses();
+        } else {
+          alert("Failed to delete expense.");
+        }
+      });
+  }

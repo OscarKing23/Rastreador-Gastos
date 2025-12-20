@@ -8,6 +8,7 @@
 <body>
   <h1>Expense Tracker</h1>
 
+  <!-- Add Expense Form -->
   <form id="expense-form">
     <input type="text" id="title" placeholder="Title" required>
     <input type="number" id="amount" placeholder="Amount" required>
@@ -16,6 +17,18 @@
     <button type="submit">Add Expense</button>
   </form>
 
+  <!-- Filter Section -->
+  <h2>Filter Expenses</h2>
+  <label for="start-date">Start Date:</label>
+  <input type="date" id="start-date">
+  <label for="end-date">End Date:</label>
+  <input type="date" id="end-date">
+  <label for="filter-category">Category:</label>
+  <input type="text" id="filter-category" placeholder="e.g. Food, Transport">
+  <button onclick="applyFilters()">Apply Filter</button>
+  <button onclick="loadExpenses()">Clear Filter</button>
+
+  <!-- Expenses Table -->
   <h2>All Expenses</h2>
   <table id="expenses-table">
     <thead>
@@ -26,6 +39,100 @@
 
   <h2>Total: <span id="total">0</span></h2>
 
-  <script src="/static/script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      loadExpenses();
+
+      document.getElementById("expense-form").addEventListener("submit", function(e) {
+        e.preventDefault();
+
+        const expense = {
+          title: document.getElementById("title").value,
+          amount: document.getElementById("amount").value,
+          category: document.getElementById("category").value,
+          date: document.getElementById("date").value
+        };
+
+        fetch("/expenses", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(expense)
+        })
+        .then(response => {
+          if (response.ok) {
+            alert("Expense added successfully!");
+            this.reset();
+            loadExpenses();
+          } else {
+            alert("Failed to add expense.");
+          }
+        });
+      });
+    });
+
+    function loadExpenses() {
+      fetch("/expenses")
+        .then(response => response.json())
+        .then(data => renderExpenses(data.data));
+    }
+
+    function renderExpenses(expenses) {
+      const tbody = document.querySelector("#expenses-table tbody");
+      tbody.innerHTML = "";
+      let total = 0;
+
+      expenses.forEach(expense => {
+        total += expense.amount;
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${expense.title}</td>
+          <td>${expense.amount}</td>
+          <td>${expense.category}</td>
+          <td>${expense.date}</td>
+          <td><button onclick="deleteExpense(${expense.id})">Delete</button></td>
+        `;
+
+        tbody.appendChild(row);
+      });
+
+      document.getElementById("total").textContent = total.toFixed(2);
+    }
+
+    function deleteExpense(id) {
+      fetch(`/expenses/${id}`, { method: "DELETE" })
+        .then(response => {
+          if (response.ok) {
+            alert("Expense deleted successfully!");
+            loadExpenses();
+          } else {
+            alert("Failed to delete expense.");
+          }
+        });
+    }
+
+    function applyFilters() {
+      const startDate = document.getElementById("start-date").value;
+      const endDate = document.getElementById("end-date").value;
+      const filterCategory = document.getElementById("filter-category").value.toLowerCase();
+
+      fetch("/expenses")
+        .then(response => response.json())
+        .then(data => {
+          let filtered = data.data;
+
+          if (startDate && endDate) {
+            filtered = filtered.filter(expense => {
+              return expense.date >= startDate && expense.date <= endDate;
+            });
+          }
+          if (filterCategory) {
+            filtered = filtered.filter(expense => expense.category.toLowerCase().includes(filterCategory));
+          }
+
+          renderExpenses(filtered);
+        });
+    }
+  </script>
 </body>
 </html>
