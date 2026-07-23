@@ -1,0 +1,43 @@
+# --- Archivos y directorios de control de versiones ---
+.git
+.gitignore
+
+# --- Entorno virtual de Python ---
+.venv
+venv
+env
+
+# --- Caches de Python ---
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# --- Bases de datos locales ---
+*.db
+expenses.db
+test_expenses.db
+
+# --- Documentación (no necesaria en la imagen) ---
+docs/
+
+# --- Archivos de IDE y editores ---
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# --- Archivos del sistema operativo ---
+Thumbs.db
+.DS_Store
+
+# --- Docker (evitar recursión) ---
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# --- Archivos temporales y de Office ---
+~$*
+*.tmp

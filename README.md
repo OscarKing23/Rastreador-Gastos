@@ -1,8 +1,8 @@
-# 💰 Expense Tracker - Fase 1: Refactorización y Código Limpio
+# 💰 Expense Tracker - Reingeniería de Software
 
 Un sistema moderno de **Gestión de Gastos (Expense Tracker)** desarrollado con **Python (Flask)**, **SQLite** e interfaz web interactiva (**HTML/CSS/JS**).
 
-Este proyecto forma parte de un proceso de reingeniería progresivo en 6 fases. En esta **Fase 1**, la aplicación ha sido transformada desde una arquitectura monolítica inicial hacia una **arquitectura modular escalable basada en Flask Blueprints, Capa de Servicios/Repositorio y Configuración Centralizada**.
+Este proyecto forma parte de un proceso de reingeniería progresivo en 6 fases. Actualmente se han completado la **Fase 1 (Refactorización)** y la **Fase 2 (Contenedorización con Docker)**.
 
 ---
 
@@ -41,6 +41,9 @@ Expense-tracker/
 ├── templates/               # Plantillas HTML (index.html)
 ├── config.py                # Centralización de variables de entorno y configuración
 ├── app.py                   # Punto de entrada principal (Entrypoint)
+├── wsgi.py                  # Punto de entrada dedicado para Gunicorn (producción)
+├── Dockerfile               # Build multi-stage optimizado (python:3.12-slim)
+├── .dockerignore            # Exclusiones del contexto de build de Docker
 ├── requirements.txt         # Dependencias del proyecto
 └── README.md                # Documentación técnica general
 ```
@@ -76,13 +79,15 @@ Expense-tracker/
 
 ## 🚀 Guía de Instalación y Ejecución
 
-### 1. Clonar el repositorio
+### Opción A: Ejecución Local (sin Docker)
+
+#### 1. Clonar el repositorio
 ```bash
 git clone https://github.com/hansinivakula/Expense-tracker.git
 cd Expense-tracker
 ```
 
-### 2. Crear y activar un entorno virtual
+#### 2. Crear y activar un entorno virtual
 ```bash
 python -m venv .venv
 # En Windows (PowerShell):
@@ -91,12 +96,12 @@ python -m venv .venv
 source .venv/bin/activate
 ```
 
-### 3. Instalar dependencias
+#### 3. Instalar dependencias
 ```bash
 pip install -r requirements.txt
 ```
 
-### 4. Ejecutar la Aplicación
+#### 4. Ejecutar la Aplicación
 ```bash
 python app.py
 ```
@@ -105,9 +110,52 @@ Accede desde tu navegador a `http://127.0.0.1:5000/`.
 
 ---
 
-## 📄 Requerimientos Cumplidos - Fase 1
+### Opción B: Ejecución con Docker 🐳 (Fase 2)
+
+#### 1. Construir la imagen Docker
+```bash
+docker build -t expense-tracker .
+```
+La imagen utiliza un **build multi-stage** con `python:3.12-slim` para producir una imagen optimizada y ligera.
+
+#### 2. Ejecutar el contenedor
+```bash
+docker run -d -p 5000:5000 --name expense-tracker-app expense-tracker
+```
+
+Accede desde tu navegador a `http://localhost:5000/`.
+
+#### 3. Verificar el estado del contenedor
+```bash
+docker ps
+docker logs expense-tracker-app
+```
+
+#### 4. Detener y eliminar el contenedor
+```bash
+docker stop expense-tracker-app
+docker rm expense-tracker-app
+```
+
+#### Detalles técnicos del Dockerfile
+- **Multi-stage build**: Etapa `builder` para instalar dependencias, etapa `production` con solo los artefactos necesarios.
+- **Imagen base**: `python:3.12-slim` (ligera y segura).
+- **Servidor WSGI**: Gunicorn con 2 workers y 2 threads por worker.
+- **Seguridad**: Ejecuta como usuario no-root (`appuser`).
+- **Persistencia**: La base de datos se almacena en `/app/data/expenses.db` dentro del contenedor.
+
+---
+
+## 📄 Requerimientos Cumplidos
+
+### Fase 1 - Ingeniería Reversa y Refactorización (Código Limpio)
 - [x] **Repositorio Modular**: Código reestructurado aplicando patrones de diseño (Factory, Repository, Service).
 - [x] **Blueprints**: Uso de `main_bp` y `expenses_bp` para separar vistas y API.
 - [x] **Segregación de Modelos**: Abstracción de entidades en `app/models/`.
 - [x] **Configuración Centralizada**: Archivo `config.py` con variables de entorno.
 - [x] **Documentación Técnica**: Comparación clara entre arquitectura legada y modular en `README.md`.
+
+### Fase 2 - Inmutabilidad y Contenedorización Local (Docker)
+- [x] **Dockerfile Optimizado**: Build multi-stage con `python:3.12-slim`, usuario no-root y Gunicorn.
+- [x] **`.dockerignore`**: Exclusión de archivos innecesarios del contexto de build.
+- [x] **Evidencia de Funcionamiento Local**: Imagen compilada y aplicación corriendo en puerto 5000.
