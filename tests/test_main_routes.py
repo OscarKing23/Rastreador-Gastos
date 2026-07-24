@@ -18,3 +18,21 @@ class TestIndexRoute:
         """GET / HTML should contain the app title 'Expense Tracker'."""
         response = client.get("/")
         assert b"Expense Tracker" in response.data
+
+
+class TestHealthRoute:
+    """Tests for the GET /api/health diagnostic endpoint."""
+
+    def test_health_check_returns_200(self, client):
+        """GET /api/health should return HTTP 200 OK."""
+        response = client.get("/api/health")
+        assert response.status_code == 200
+
+    def test_health_check_payload_structure(self, client):
+        """GET /api/health should return JSON with expected keys."""
+        response = client.get("/api/health")
+        data = response.get_json()
+        assert data["status"] == "healthy"
+        assert data["database"] == "connected"
+        assert "timestamp" in data
+
