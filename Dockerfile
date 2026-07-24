@@ -57,4 +57,4 @@ USER appuser
 EXPOSE 5000
 
 # Comando de ejecución con Gunicorn (servidor WSGI de producción)
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--threads", "2", "wsgi:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --threads 2 wsgi:app"]
