@@ -37,7 +37,6 @@ COPY templates/ ./templates/
 COPY static/ ./static/
 COPY config.py .
 COPY app.py .
-COPY wsgi.py .
 COPY requirements.txt .
 
 # Crear directorio para la base de datos y asignar permisos
@@ -57,4 +56,4 @@ USER appuser
 EXPOSE 5000
 
 # Comando de ejecución con Gunicorn (servidor WSGI de producción)
-CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --threads 2 wsgi:app"]
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --threads 2 app:app"]
