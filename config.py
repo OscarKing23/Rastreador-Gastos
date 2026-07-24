@@ -21,6 +21,8 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     """Configuración para entorno de producción."""
     DEBUG = False
+    DATABASE_PATH = os.environ.get('DATABASE_PATH', '/tmp/expenses.db')
+
 
 config_by_name = {
     'development': DevelopmentConfig,

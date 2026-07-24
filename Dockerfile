@@ -46,7 +46,7 @@ RUN mkdir -p /app/data \
 
 # Variables de entorno
 ENV FLASK_ENV=production \
-    DATABASE_PATH=/app/data/expenses.db \
+    DATABASE_PATH=/tmp/expenses.db \
     PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 
@@ -57,4 +57,4 @@ USER appuser
 EXPOSE 5000
 
 # Comando de ejecución con Gunicorn (servidor WSGI de producción)
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --threads 2 wsgi:app"]
+CMD ["sh", "-c", "exec gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --threads 2 wsgi:app"]
