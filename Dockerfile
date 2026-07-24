@@ -54,7 +54,7 @@ ENV FLASK_ENV=production \
 USER appuser
 
 # Puerto expuesto
-EXPOSE 5000
+EXPOSE 8080
 
 # Comando de ejecución con Gunicorn (servidor WSGI de producción)
-CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-5000} --workers 2 --threads 2 wsgi:app"]
+CMD ["sh", "-c", "gunicorn --bind 0.0.0.0:${PORT:-8080} --workers 2 --threads 2 wsgi:app"]

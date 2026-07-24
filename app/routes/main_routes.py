@@ -13,6 +13,11 @@ def index():
     total = expense_service.get_total_expenses()
     return render_template("index.html", expenses=expenses, total=total)
 
+@main_bp.route("/health", methods=["GET"])
+def simple_health_check():
+    """Endpoint simple de salud para verificaciones de despliegue (Railway)."""
+    return jsonify({"status": "ok"}), 200
+
 @main_bp.route("/api/health", methods=["GET"])
 def health_check():
     """Endpoint de diagnóstico para monitorear la salud del servidor en tiempo real."""
